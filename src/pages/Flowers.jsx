@@ -69,7 +69,7 @@ const Flowers = () => {
             {/* Image container */}
             <div className="relative bg-white p-3 rounded-2xl shadow-2xl transform group-hover:scale-105 transition-transform duration-500">
               <img
-                src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80"
+                src="/pictures/flower2.jpg"
                 alt="Beautiful Flowers Bouquet"
                 className="rounded-xl w-80 md:w-96 h-80 md:h-96 object-cover shadow-lg"
               />

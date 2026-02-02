@@ -1,193 +1,292 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const Pictures = () => {
   const [selectedImage, setSelectedImage] = useState(null)
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
+  const [revealedImages, setRevealedImages] = useState([])
 
   const memories = [
     {
       src: '/pictures/emma1.jpeg',
       alt: 'Beautiful Memory',
       caption: 'A moment to treasure',
-      date: 'Forever in my heart'
+      date: 'Forever in my heart',
+      emotion: 'Joy'
     },
     {
       src: '/pictures/emma2.jpeg',
       alt: 'Sweet Memory',
       caption: 'Time stands still',
-      date: 'A perfect day'
+      date: 'A perfect day',
+      emotion: 'Bliss'
     },
     {
       src: '/pictures/emma3.jpeg',
       alt: 'Precious Memory',
       caption: 'Pure happiness',
-      date: 'Never forget'
+      date: 'Never forget',
+      emotion: 'Love'
     },
     {
       src: '/pictures/eunice1.jpeg',
       alt: 'Cherished Memory',
       caption: 'Love captured',
-      date: 'Our story'
+      date: 'Our story',
+      emotion: 'Romance'
     }
   ]
+
+  useEffect(() => {
+    // Stagger image reveals
+    memories.forEach((_, index) => {
+      setTimeout(() => {
+        setRevealedImages(prev => [...prev, index])
+      }, 500 + index * 250)
+    })
+  }, [])
 
   const openLightbox = (index) => {
     setSelectedImage(index)
     setIsLightboxOpen(true)
+    document.body.style.overflow = 'hidden'
   }
 
   const closeLightbox = () => {
     setIsLightboxOpen(false)
+    document.body.style.overflow = 'auto'
     setTimeout(() => setSelectedImage(null), 300)
   }
 
-  const nextImage = () => {
+  const nextImage = (e) => {
+    e.stopPropagation()
     setSelectedImage((prev) => (prev + 1) % memories.length)
   }
 
-  const prevImage = () => {
+  const prevImage = (e) => {
+    e.stopPropagation()
     setSelectedImage((prev) => (prev - 1 + memories.length) % memories.length)
   }
 
-  return (
-    <div className="min-h-screen bg-linear-to-br from-pink-50 via-rose-50 to-purple-50 flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-64 h-64 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-        <div className="absolute top-40 right-10 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute bottom-20 left-1/2 w-64 h-64 bg-rose-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
-      </div>
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!isLightboxOpen) return
+      if (e.key === 'Escape') closeLightbox()
+      if (e.key === 'ArrowRight') nextImage(e)
+      if (e.key === 'ArrowLeft') prevImage(e)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isLightboxOpen])
 
-      {/* Floating hearts */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(10)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute text-pink-300 opacity-30 animate-float-slow"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${6 + Math.random() * 4}s`,
-              fontSize: `${15 + Math.random() * 15}px`
-            }}
-          >
-            💕
-          </div>
-        ))}
-      </div>
+  return (
+    <div className="min-h-screen bg-linear-to-br from-neutral-900 via-stone-900 to-neutral-800 relative overflow-hidden">
+      
+      {/* Elegant grain texture overlay */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-noise"></div>
+      
+      {/* Ambient light effects */}
+      <div className="absolute top-0 left-0 w-200 h-200 bg-rose-500/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute bottom-0 right-0 w-150 h-150 bg-amber-500/10 rounded-full blur-[100px] translate-x-1/3 translate-y-1/3"></div>
 
       {/* Main content */}
-      <div className="relative z-10 w-full max-w-6xl">
-        {/* Title section */}
-        <div className="text-center mb-12">
-          <div className="inline-block mb-6">
-            <div className="flex items-center justify-center space-x-3 mb-3">
-              <span className="text-4xl animate-bounce">📸</span>
-              <h1 className="text-5xl md:text-7xl font-bold bg-linear-to-r from-pink-600 via-rose-500 to-purple-600 bg-clip-text text-transparent animate-gradient">
-                Our Memories
-              </h1>
-              <span className="text-4xl animate-bounce" style={{ animationDelay: '0.2s' }}>💖</span>
+      <div className="relative z-10 min-h-screen px-6 py-20 md:px-12 lg:px-20">
+        
+        {/* Sophisticated header */}
+        <div className="max-w-7xl mx-auto mb-20">
+          <div className="text-center">
+            <div className="inline-block mb-4">
+              <span className="text-rose-400/60 text-sm uppercase tracking-[0.3em] font-light">
+                Our Collection
+              </span>
             </div>
-            <div className="h-1 bg-linear-to-r from-pink-400 via-rose-400 to-purple-400 rounded-full"></div>
+            <h1 className="text-6xl md:text-8xl lg:text-9xl font-serif font-light text-neutral-100 mb-6 tracking-tight leading-none">
+              Memories
+            </h1>
+            <div className="w-24 h-px bg-linear-to-r from-transparent via-rose-400/50 to-transparent mx-auto mb-8"></div>
+            <p className="text-xl md:text-2xl text-neutral-400 font-light italic max-w-2xl mx-auto leading-relaxed">
+              Where time becomes eternal, and every glance speaks a thousand words
+            </p>
           </div>
-          <p className="text-xl md:text-2xl text-gray-600 font-light">
-            Every picture tells our story 💕
-          </p>
         </div>
 
-        {/* Photo gallery */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 md:gap-8 mb-12">
-          {memories.map((memory, index) => (
-            <div
-              key={index}
-              onClick={() => openLightbox(index)}
-              className="group relative cursor-pointer"
-            >
-              {/* Polaroid-style frame */}
-              <div className="bg-white p-3 md:p-4 rounded-lg shadow-xl transform transition-all duration-500 hover:scale-105 hover:rotate-1 hover:shadow-2xl">
-                {/* Image container */}
-                <div className="relative overflow-hidden rounded-md bg-gray-100 aspect-square">
+        {/* Asymmetric luxury gallery grid */}
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
+            
+            {/* First image - Large feature */}
+            {memories[0] && (
+              <div className={`md:col-span-7 transition-all duration-1000 ${
+                revealedImages.includes(0) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+              }`}>
+                <div 
+                  onClick={() => openLightbox(0)}
+                  className="group relative cursor-pointer h-125 md:h-175 overflow-hidden rounded-sm"
+                >
                   <img
-                    src={memory.src}
-                    alt={memory.alt}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    src={memories[0].src}
+                    alt={memories[0].alt}
+                    className="w-full h-full object-cover transition-all duration-1500 group-hover:scale-110 grayscale group-hover:grayscale-0"
                   />
                   
-                  {/* Overlay on hover */}
-                  <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                      <p className="text-lg font-semibold mb-1">{memory.caption}</p>
-                      <p className="text-sm opacity-90">{memory.date}</p>
-                    </div>
+                  {/* Elegant overlay */}
+                  <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-700"></div>
+                  
+                  {/* Content */}
+                  <div className="absolute bottom-0 left-0 right-0 p-10 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
+                    <span className="inline-block text-rose-300/80 text-xs uppercase tracking-[0.25em] mb-3">
+                      {memories[0].emotion}
+                    </span>
+                    <h3 className="text-4xl md:text-5xl font-serif text-white mb-3 leading-tight">
+                      {memories[0].caption}
+                    </h3>
+                    <p className="text-neutral-300 font-light italic text-lg">
+                      {memories[0].date}
+                    </p>
                   </div>
 
-                  {/* Click to view indicator */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="bg-white/90 rounded-full p-4 shadow-lg">
-                      <svg className="w-8 h-8 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                      </svg>
-                    </div>
-                  </div>
-
-                  {/* Corner hearts */}
-                  <div className="absolute top-2 right-2 text-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse">
-                    💖
-                  </div>
-                </div>
-
-                {/* Caption below image (Polaroid style) */}
-                <div className="mt-3 text-center">
-                  <p className="text-gray-600 font-handwriting text-lg">{memory.caption}</p>
+                  {/* Corner accent */}
+                  <div className="absolute top-8 right-8 w-16 h-16 border-t-2 border-r-2 border-rose-400/40 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                 </div>
               </div>
+            )}
 
-              {/* Decorative tape effect */}
-              <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-16 h-6 bg-yellow-100/60 opacity-70 rotate-3 shadow-sm"></div>
+            {/* Second & Third images - Stacked */}
+            <div className="md:col-span-5 space-y-8 md:space-y-12">
+              {memories[1] && (
+                <div className={`transition-all duration-1000 delay-200 ${
+                  revealedImages.includes(1) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+                }`}>
+                  <div 
+                    onClick={() => openLightbox(1)}
+                    className="group relative cursor-pointer h-100 overflow-hidden rounded-sm"
+                  >
+                    <img
+                      src={memories[1].src}
+                      alt={memories[1].alt}
+                      className="w-full h-full object-cover transition-all duration-1500 group-hover:scale-110 grayscale group-hover:grayscale-0"
+                    />
+                    
+                    <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-700"></div>
+                    
+                    <div className="absolute bottom-0 left-0 right-0 p-8">
+                      <span className="inline-block text-amber-300/80 text-xs uppercase tracking-[0.25em] mb-2">
+                        {memories[1].emotion}
+                      </span>
+                      <h3 className="text-3xl font-serif text-white mb-2">
+                        {memories[1].caption}
+                      </h3>
+                      <p className="text-neutral-300 font-light italic">
+                        {memories[1].date}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {memories[2] && (
+                <div className={`transition-all duration-1000 delay-400 ${
+                  revealedImages.includes(2) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+                }`}>
+                  <div 
+                    onClick={() => openLightbox(2)}
+                    className="group relative cursor-pointer h-62.5 overflow-hidden rounded-sm"
+                  >
+                    <img
+                      src={memories[2].src}
+                      alt={memories[2].alt}
+                      className="w-full h-full object-cover transition-all duration-1500 group-hover:scale-110 grayscale group-hover:grayscale-0"
+                    />
+                    
+                    <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-700"></div>
+                    
+                    <div className="absolute bottom-0 left-0 right-0 p-6">
+                      <span className="inline-block text-rose-300/80 text-xs uppercase tracking-[0.25em] mb-2">
+                        {memories[2].emotion}
+                      </span>
+                      <h3 className="text-2xl font-serif text-white mb-1">
+                        {memories[2].caption}
+                      </h3>
+                      <p className="text-neutral-300 font-light italic text-sm">
+                        {memories[2].date}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          ))}
+
+            {/* Fourth image - Wide feature */}
+            {memories[3] && (
+              <div className={`md:col-span-12 transition-all duration-1000 delay-600 ${
+                revealedImages.includes(3) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+              }`}>
+                <div 
+                  onClick={() => openLightbox(3)}
+                  className="group relative cursor-pointer h-100 md:h-125 overflow-hidden rounded-sm"
+                >
+                  <img
+                    src={memories[3].src}
+                    alt={memories[3].alt}
+                    className="w-full h-full object-cover transition-all duration-1500 group-hover:scale-110 grayscale group-hover:grayscale-0"
+                  />
+                  
+                  <div className="absolute inset-0 bg-linear-to-r from-black/90 via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-700"></div>
+                  
+                  <div className="absolute inset-0 flex items-center p-12 md:p-16">
+                    <div className="max-w-xl transform translate-x-4 group-hover:translate-x-0 transition-transform duration-700">
+                      <span className="inline-block text-rose-300/80 text-xs uppercase tracking-[0.25em] mb-4">
+                        {memories[3].emotion}
+                      </span>
+                      <h3 className="text-4xl md:text-6xl font-serif text-white mb-4 leading-tight">
+                        {memories[3].caption}
+                      </h3>
+                      <p className="text-neutral-200 font-light italic text-xl">
+                        {memories[3].date}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Decorative element */}
+                  <div className="absolute bottom-12 right-12 w-20 h-20 border-b-2 border-r-2 border-amber-400/40 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Memory quote */}
-        <div className="max-w-3xl mx-auto mb-12">
-          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-10 relative overflow-hidden">
-            <div className="absolute top-0 right-0 text-8xl opacity-5">📷</div>
-            <div className="absolute bottom-0 left-0 text-8xl opacity-5">💕</div>
-            
-            <div className="relative z-10 text-center">
-              <p className="text-xl md:text-2xl text-gray-700 font-serif italic leading-relaxed mb-4">
-                "In every photograph, there's a piece of our hearts frozen in time. 
-                These moments may pass, but the memories we've created will last forever."
-              </p>
-              <div className="flex justify-center space-x-2 text-3xl">
-                <span className="animate-pulse">💖</span>
-                <span className="animate-pulse" style={{ animationDelay: '0.3s' }}>📸</span>
-                <span className="animate-pulse" style={{ animationDelay: '0.6s' }}>💖</span>
-              </div>
+        {/* Elegant quote section */}
+        <div className="max-w-4xl mx-auto mt-32 mb-20">
+          <div className="relative bg-linear-to-br from-neutral-800/40 to-stone-900/40 backdrop-blur-xl rounded-sm p-12 md:p-16 border border-neutral-700/30">
+            <div className="absolute top-8 left-8 text-6xl text-rose-400/10 font-serif">"</div>
+            <p className="text-2xl md:text-3xl text-neutral-200 font-serif italic text-center leading-relaxed relative z-10">
+              In the quiet spaces between heartbeats, we found forever. These photographs are not merely images—they are fragments of eternity, whispers of a love that transcends time.
+            </p>
+            <div className="flex justify-center mt-8 space-x-1">
+              <div className="w-1 h-1 rounded-full bg-rose-400/60"></div>
+              <div className="w-1 h-1 rounded-full bg-rose-400/40"></div>
+              <div className="w-1 h-1 rounded-full bg-rose-400/20"></div>
             </div>
           </div>
         </div>
 
-        {/* Back button */}
+        {/* Refined back button */}
         <div className="text-center">
           <button
             onClick={() => window.history.back()}
-            className="group relative inline-flex items-center space-x-2 bg-linear-to-r from-pink-500 via-rose-500 to-purple-500 text-white font-semibold py-4 px-8 rounded-full shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
+            className="group inline-flex items-center space-x-4 text-neutral-400 hover:text-rose-400 transition-all duration-500 border border-neutral-700/30 hover:border-rose-400/30 rounded-full px-8 py-4"
           >
-            <span className="absolute inset-0 bg-linear-to-r from-purple-500 via-rose-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-            <svg className="w-5 h-5 relative z-10 transform group-hover:-translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            <svg className="w-5 h-5 transform group-hover:-translate-x-2 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            <span className="relative z-10">Back to Gifts</span>
+            <span className="text-sm uppercase tracking-[0.2em] font-light">Return</span>
           </button>
         </div>
       </div>
 
-      {/* Lightbox modal */}
+      {/* Premium lightbox */}
       {isLightboxOpen && selectedImage !== null && (
         <div 
-          className={`fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 transition-opacity duration-300 ${
+          className={`fixed inset-0 bg-black/98 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity duration-500 ${
             isLightboxOpen ? 'opacity-100' : 'opacity-0'
           }`}
           onClick={closeLightbox}
@@ -195,104 +294,81 @@ const Pictures = () => {
           {/* Close button */}
           <button
             onClick={closeLightbox}
-            className="absolute top-4 right-4 text-white hover:text-pink-400 transition-colors z-50"
-          >
-            <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-
-          {/* Previous button */}
-          <button
-            onClick={(e) => { e.stopPropagation(); prevImage(); }}
-            className="absolute left-4 text-white hover:text-pink-400 transition-colors z-50 bg-black/50 rounded-full p-3 hover:bg-black/70"
+            className="absolute top-8 right-8 text-neutral-400 hover:text-white transition-colors z-50 group"
           >
             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
 
-          {/* Next button */}
+          {/* Navigation */}
           <button
-            onClick={(e) => { e.stopPropagation(); nextImage(); }}
-            className="absolute right-4 text-white hover:text-pink-400 transition-colors z-50 bg-black/50 rounded-full p-3 hover:bg-black/70"
+            onClick={prevImage}
+            className="absolute left-8 text-neutral-400 hover:text-white transition-all z-50 bg-neutral-900/50 hover:bg-neutral-900/80 backdrop-blur-sm rounded-full p-4"
           >
-            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
 
-          {/* Image */}
-          <div onClick={(e) => e.stopPropagation()} className="max-w-5xl max-h-[90vh] relative">
-            <img
-              src={memories[selectedImage].src}
-              alt={memories[selectedImage].alt}
-              className="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl"
-            />
-            {/* Caption */}
-            <div className="text-center mt-4 text-white">
-              <p className="text-2xl font-semibold mb-2">{memories[selectedImage].caption}</p>
-              <p className="text-lg opacity-80">{memories[selectedImage].date}</p>
+          <button
+            onClick={nextImage}
+            className="absolute right-8 text-neutral-400 hover:text-white transition-all z-50 bg-neutral-900/50 hover:bg-neutral-900/80 backdrop-blur-sm rounded-full p-4"
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* Image counter */}
+          <div className="absolute top-8 left-8 text-neutral-400 text-sm tracking-wider">
+            {selectedImage + 1} / {memories.length}
+          </div>
+
+          {/* Main image */}
+          <div onClick={(e) => e.stopPropagation()} className="max-w-6xl w-full px-4">
+            <div className="relative">
+              <img
+                src={memories[selectedImage].src}
+                alt={memories[selectedImage].alt}
+                className="w-full max-h-[85vh] object-contain rounded-sm"
+              />
+              
+              {/* Caption overlay */}
+              <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/90 to-transparent p-8">
+                <span className="inline-block text-rose-300/80 text-xs uppercase tracking-[0.25em] mb-2">
+                  {memories[selectedImage].emotion}
+                </span>
+                <h3 className="text-3xl md:text-4xl font-serif text-white mb-2">
+                  {memories[selectedImage].caption}
+                </h3>
+                <p className="text-neutral-300 font-light italic text-lg">
+                  {memories[selectedImage].date}
+                </p>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Custom animations */}
+      {/* Custom styles */}
       <style jsx>{`
-        @keyframes blob {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
+        @keyframes grain {
+          0%, 100% { transform: translate(0, 0); }
+          10% { transform: translate(-5%, -10%); }
+          20% { transform: translate(-15%, 5%); }
+          30% { transform: translate(7%, -25%); }
+          40% { transform: translate(-5%, 25%); }
+          50% { transform: translate(-15%, 10%); }
+          60% { transform: translate(15%, 0%); }
+          70% { transform: translate(0%, 15%); }
+          80% { transform: translate(3%, 35%); }
+          90% { transform: translate(-10%, 10%); }
         }
 
-        @keyframes float-slow {
-          0%, 100% {
-            transform: translateY(0) translateX(0);
-          }
-          25% {
-            transform: translateY(-20px) translateX(10px);
-          }
-          50% {
-            transform: translateY(-10px) translateX(-10px);
-          }
-          75% {
-            transform: translateY(-30px) translateX(5px);
-          }
-        }
-
-        @keyframes gradient {
-          0%, 100% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-        }
-
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-
-        .animate-float-slow {
-          animation: float-slow ease-in-out infinite;
-        }
-
-        .animate-gradient {
-          background-size: 200% 200%;
-          animation: gradient 3s ease infinite;
-        }
-
-        .font-handwriting {
-          font-family: 'Brush Script MT', 'Segoe Script', cursive;
+        .bg-noise {
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+          animation: grain 8s steps(10) infinite;
         }
       `}</style>
     </div>
